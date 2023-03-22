@@ -1,5 +1,6 @@
 using GeoChat.Geolocation.Api.DbAccess;
 using GeoChat.Geolocation.Api.Entities;
+using GeoChat.Geolocation.Api.Hubs;
 using GeoChat.Geolocation.Api.MessageQueue.Listeners;
 using GeoChat.Geolocation.Api.Repo;
 using GeoChat.Identity.Api.Extensions;
@@ -47,5 +48,5 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
-
+app.MapHub<RealTimeHub>("/geolocationHub"); /// change magic string
 app.Run();
