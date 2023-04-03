@@ -49,5 +49,5 @@ app.UseAuthorization();
 
 app.MapControllers();
 app.MapHub<RealTimeHub>("/geolocationHub"); /// change magic string
-
+ 
 app.Run();
