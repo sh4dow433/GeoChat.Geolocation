@@ -30,7 +30,7 @@ builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
 builder.Services.AddTransient<IMqListener, MqListener>();
 
-
+builder.Services.AddSignalR();
 
 var app = builder.Build();
 
