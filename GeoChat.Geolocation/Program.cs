@@ -1,11 +1,11 @@
 using GeoChat.Geolocation.Api.DbAccess;
 using GeoChat.Geolocation.Api.Entities;
 using GeoChat.Geolocation.Api.Hubs;
-using GeoChat.Geolocation.Api.MessageQueue.Listeners;
 using GeoChat.Geolocation.Api.Repo;
-using GeoChat.Identity.Api.Extensions;
+using GeoChat.Geolocation.Api.AuthExtensions;
 using Microsoft.EntityFrameworkCore;
-
+using GeoChat.Geolocation.Api.EventBus;
+using GeoChat.Geolocation.Api.RabbitMqEventBus.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -28,7 +28,14 @@ builder.Services.AddScoped<IGenericRepo<Location>, GenericRepo<Location>>();
 
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
-builder.Services.AddTransient<IMqListener, MqListener>();
+if (builder.Environment.IsDevelopment())
+{
+    builder.Services.AddSingleton<IEventBus, MockEventBus>();
+}
+else
+{
+    builder.Services.RegisterEventBus();
+}
 
 builder.Services.AddSignalR();
 
