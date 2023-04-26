@@ -25,10 +25,10 @@ public class ServerController : ControllerBase
 		String geoHashCode = geoHasher.getGeoHashCode(latitude, longitude);
 
 		IEnumerable<Location> locations = await locationsRepository.GetAllAsync();
-		Location location = locations.First(l => l.geoHashCode.Equals(geoHashCode));
+		Location location = locations.First(l => geoHashCode.StartsWith(l.GeoHashCode));
 		if (location == null) return null;
 
-		Server? server = await serversRepository.GetAsync(location.serverId);
+		Server? server = await serversRepository.GetAsync(location.ServerId);
 		if (server == null) return null;
 		return server;
 	}

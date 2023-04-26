@@ -2,13 +2,7 @@
 
 public class Location
 {
-    public long id { get; set; }
-    public String geoHashCode { get; set; }
-    public long serverId { get; set; }
-    
-    public Location(int id, String geoHashCode, long serverId) { 
-        this.id = id;
-        this.geoHashCode = geoHashCode;
-        this.serverId = serverId;
-    }
+    public long Id { get; set; }
+    public string GeoHashCode { get; set; }
+    public long ServerId { get; set; }
 }

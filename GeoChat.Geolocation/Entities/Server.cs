@@ -1,11 +1,5 @@
 public class Server {
-    public long id { get; set; }
-    public String name { get; set; }
-    public String url { get; set; }
-
-    public Server(long id, String name, String url) { 
-        this.id = id;
-        this.name = name;
-        this.url = url;
-    }
+    public long Id { get; set; }
+    public String Name { get; set; }
+    public String Url { get; set; }
 }
