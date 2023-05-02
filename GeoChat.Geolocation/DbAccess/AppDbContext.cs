@@ -1,6 +1,5 @@
 ﻿using GeoChat.Geolocation.Api.Entities;
 using Microsoft.EntityFrameworkCore;
-using System.Collections.Generic;
 
 namespace GeoChat.Geolocation.Api.DbAccess;
 

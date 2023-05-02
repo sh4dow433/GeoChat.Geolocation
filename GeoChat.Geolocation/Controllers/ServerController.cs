@@ -1,10 +1,7 @@
-﻿using GeoChat.Geolocation.Api.DbAccess;
-using GeoChat.Geolocation.Api.Entities;
+﻿using GeoChat.Geolocation.Api.Entities;
 using GeoChat.Geolocation.Api.Repo;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Infrastructure;
-using Microsoft.EntityFrameworkCore;
 
 namespace GeoChat.Geolocation.Api.Controllers;
 
@@ -12,8 +9,16 @@ namespace GeoChat.Geolocation.Api.Controllers;
 [Route("api/[controller]")]
 public class ServerController : ControllerBase
 {
-	private readonly IGenericRepo<Server> serversRepository;
+    private readonly IGenericRepo<Server> serversRepository;
 	private readonly IGenericRepo<Location> locationsRepository;
+	private readonly IGeoHasher geoHasher;
+
+	public ServerController(IGenericRepo<Server> serversRepository, IGenericRepo<Location> locationsRepository, IGeoHasher geoHasher)
+	{
+		this.serversRepository = serversRepository;
+		this.locationsRepository = locationsRepository;
+		this.geoHasher = geoHasher;
+	}
 
 	[HttpGet("{latitude}/{longitude}")]
 	[Authorize]
@@ -21,7 +26,6 @@ public class ServerController : ControllerBase
 	{
 		if (latitude < -90 || latitude > 90) throw new ArgumentException("Wrong latitude value!");
 		if (longitude < -180 || latitude > 180) throw new ArgumentException("Wrong longitude value!");
-		IGeoHasher geoHasher = new GeoHasher();
 		String geoHashCode = geoHasher.getGeoHashCode(latitude, longitude);
 
 		IEnumerable<Location> locations = await locationsRepository.GetAllAsync();

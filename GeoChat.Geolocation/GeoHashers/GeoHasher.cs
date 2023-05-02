@@ -1,7 +1,17 @@
 public class GeoHasher : IGeoHasher
 {
+    private readonly int precision;
     private readonly double[][] limits = new double[][] { new double[] { -90, 90 }, new double[] { -180, 180 } };
     private readonly int LATITUDE = 0, LONGITUDE = 1, LEFT = 0, RIGHT = 1, BASE = 32;
+
+    public GeoHasher(IConfiguration configuration)
+    {
+        try{
+            this.precision = Int32.Parse(configuration["GeoHasher:Precision"]);
+        }catch (ArgumentNullException e) {
+            throw new ArgumentNullException("Precision value is missing from configuration.", e);
+        }
+    }
 
     public String getGeoHashCode(double latitude, double longitude)
     {
@@ -10,7 +20,6 @@ public class GeoHasher : IGeoHasher
         int bit = 0;
         Boolean even = true;
         string? s = Environment.GetEnvironmentVariable("GeoHasher:Precision");
-        int precision = s == null ? 6 : Int32.Parse(s);
 
         while (geoHashCode.Length < precision)
         {
