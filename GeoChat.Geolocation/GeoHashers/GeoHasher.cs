@@ -19,7 +19,6 @@ public class GeoHasher : IGeoHasher
         int fourBitChar = 0;
         int bit = 0;
         Boolean even = true;
-        string? s = Environment.GetEnvironmentVariable("GeoHasher:Precision");
 
         while (geoHashCode.Length < precision)
         {
