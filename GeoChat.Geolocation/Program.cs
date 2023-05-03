@@ -26,6 +26,8 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 
 builder.Services.AddScoped<IGenericRepo<Location>, GenericRepo<Location>>();
 
+builder.Services.AddScoped<IGenericRepo<Server>, GenericRepo<Server>>();
+
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
 if (builder.Environment.IsDevelopment())
@@ -38,6 +40,8 @@ else
 }
 
 builder.Services.AddSignalR();
+
+builder.Services.AddScoped<IGeoHasher, GeoHasher>();
 
 var app = builder.Build();
 

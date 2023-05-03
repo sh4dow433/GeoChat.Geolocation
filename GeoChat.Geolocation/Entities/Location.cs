@@ -2,5 +2,7 @@
 
 public class Location
 {
-    public int Id { get; set; }
+    public long Id { get; set; }
+    public string GeoHashCode { get; set; }
+    public long ServerId { get; set; }
 }
