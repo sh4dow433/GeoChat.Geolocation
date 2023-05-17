@@ -34,8 +34,6 @@ builder.Services.AddTransient<IMqListener, MqListener>();
 
 builder.Services.AddSignalR();
 
-builder.Services.AddScoped<IGeoHasher, GeoHasher>();
-
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

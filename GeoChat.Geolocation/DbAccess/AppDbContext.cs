@@ -8,15 +8,29 @@ public class AppDbContext : DbContext
     public virtual DbSet<Server> Servers => Set<Server>();
     public virtual DbSet<Location> Locations => Set<Location>();
 
-    public AppDbContext(DbContextOptions options) : base(options)
+    IConfiguration configuration;
+
+    public AppDbContext(DbContextOptions options, IConfiguration configuration) : base(options)
     {
+        this.configuration = configuration;
     }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
 
+        int defaultServerId;
+        try
+        {
+            defaultServerId = Int32.Parse(configuration["Servers:DefaultServerId"]);
+        }
+        catch (ArgumentNullException e)
+        {
+            throw new ArgumentNullException("Precision value is missing from configuration.", e);
+        }
+
         modelBuilder.Entity<Server>().HasData(
+            new Server() { Id = defaultServerId, Name = "Default", Url = ""},
             new Server() { Id = 1, Name = "Timis", Url = ""},
             new Server() { Id = 2, Name = "Bucuresti", Url = ""},
             new Server() { Id = 3, Name = "Cluj-Napoca", Url = ""}

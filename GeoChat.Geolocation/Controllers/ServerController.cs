@@ -1,7 +1,7 @@
 ﻿using GeoChat.Geolocation.Api.Entities;
 using GeoChat.Geolocation.Api.Repo;
+using Geohash;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Hosting.Server;
 using Microsoft.AspNetCore.Mvc;
 
 namespace GeoChat.Geolocation.Api.Controllers;
@@ -12,13 +12,13 @@ public class ServerController : ControllerBase
 {
     private readonly IGenericRepo<Server> serversRepository;
 	private readonly IGenericRepo<Location> locationsRepository;
-	private readonly IGeoHasher geoHasher;
+	private readonly IConfiguration configuration;
 
-	public ServerController(IGenericRepo<Server> serversRepository, IGenericRepo<Location> locationsRepository, IGeoHasher geoHasher)
+	public ServerController(IGenericRepo<Server> serversRepository, IGenericRepo<Location> locationsRepository, IConfiguration configuration)
 	{
 		this.serversRepository = serversRepository;
 		this.locationsRepository = locationsRepository;
-		this.geoHasher = geoHasher;
+		this.configuration = configuration;
 	}
 
 	[HttpGet("{latitude}/{longitude}")]
@@ -27,15 +27,30 @@ public class ServerController : ControllerBase
 	{
 		if (latitude < -90 || latitude > 90) return BadRequest();
 		if (longitude < -180 || latitude > 180) return BadRequest();
-        String geoHashCode = geoHasher.getGeoHashCode(latitude, longitude);
+
+		int precision;
+		int defaultServerId;
+        try{
+            precision = Int32.Parse(configuration["GeoHasher:Precision"]);
+            defaultServerId = Int32.Parse(configuration["Servers:DefaultServerId"]);
+        }
+        catch (ArgumentNullException e){
+            throw new ArgumentNullException("Precision value is missing from configuration.", e);
+        }
+
+        var geohasher = new Geohasher();
+        string geohashCode = geohasher.Encode(latitude, longitude, precision);
 
 		IEnumerable<Location> locations = await locationsRepository.GetAllAsync();
-		Location location = locations.First(l => geoHashCode.StartsWith(l.GeoHashCode));
-		if (location == null) return NotFound();
+		Location? location = locations.FirstOrDefault(l => geohashCode.StartsWith(l.GeoHashCode));
+		
+		long serverId;
+		if (location == null) serverId = defaultServerId;
+		else serverId = location.ServerId;
 
-		Server? server = await serversRepository.GetAsync(location.ServerId);
-		if (server == null) return NotFound();
-		return Ok(server);
+        Server? server = await serversRepository.GetAsync(serverId);
+		if (server == null) return StatusCode(StatusCodes.Status500InternalServerError);
+        return Ok(server);
 	}
 
 	[HttpGet("{id}")]
