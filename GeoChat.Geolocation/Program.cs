@@ -25,7 +25,6 @@ builder.Services.AddScoped<IGenericRepo<Location>, GenericRepo<Location>>();
 
 builder.Services.AddScoped<IGenericRepo<Server>, GenericRepo<Server>>();
 
-builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
 if (builder.Environment.IsDevelopment())
 {
