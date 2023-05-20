@@ -25,7 +25,6 @@ builder.Services.AddScoped<IGenericRepo<Location>, GenericRepo<Location>>();
 
 builder.Services.AddScoped<IGenericRepo<Server>, GenericRepo<Server>>();
 
-
 if (builder.Environment.IsDevelopment())
 {
     builder.Services.AddSingleton<IEventBus, MockEventBus>();
@@ -37,6 +36,11 @@ else
 
 
 var app = builder.Build();
+
+// UPDATE DB ON STARTUP
+var dbContext = app.Services.GetService<AppDbContext>();
+if (dbContext == null) throw new Exception("Db context is null");
+dbContext.Database.Migrate();
 
 // Configure the HTTP request pipeline.
 app.UseSwagger();
