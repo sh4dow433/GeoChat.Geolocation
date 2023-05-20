@@ -16,8 +16,6 @@ builder.Services.RegisterAuthServices(builder.Configuration);
 
 builder.Services.RegisterSwaggerWithAuthInformation();
 
-builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
-
 builder.Services.AddDbContext<AppDbContext>(options =>
 {
     options.UseSqlServer(builder.Configuration.GetConnectionString("GeolocationDb"));
