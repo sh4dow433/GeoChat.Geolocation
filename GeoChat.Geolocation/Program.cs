@@ -1,6 +1,5 @@
 using GeoChat.Geolocation.Api.DbAccess;
 using GeoChat.Geolocation.Api.Entities;
-using GeoChat.Geolocation.Api.Hubs;
 using GeoChat.Geolocation.Api.Repo;
 using GeoChat.Geolocation.Api.AuthExtensions;
 using Microsoft.EntityFrameworkCore;
@@ -39,7 +38,6 @@ else
     builder.Services.RegisterEventBus();
 }
 
-builder.Services.AddSignalR();
 
 var app = builder.Build();
 
@@ -54,6 +52,5 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
-app.MapHub<RealTimeHub>("/geolocationHub"); /// change magic string
  
 app.Run();
