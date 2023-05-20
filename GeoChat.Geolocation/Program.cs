@@ -1,6 +1,5 @@
 using GeoChat.Geolocation.Api.DbAccess;
 using GeoChat.Geolocation.Api.Entities;
-using GeoChat.Geolocation.Api.Hubs;
 using GeoChat.Geolocation.Api.Repo;
 using GeoChat.Geolocation.Api.AuthExtensions;
 using Microsoft.EntityFrameworkCore;
@@ -17,8 +16,6 @@ builder.Services.RegisterAuthServices(builder.Configuration);
 
 builder.Services.RegisterSwaggerWithAuthInformation();
 
-builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
-
 builder.Services.AddDbContext<AppDbContext>(options =>
 {
     options.UseSqlServer(builder.Configuration.GetConnectionString("GeolocationDb"));
@@ -27,8 +24,6 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 builder.Services.AddScoped<IGenericRepo<Location>, GenericRepo<Location>>();
 
 builder.Services.AddScoped<IGenericRepo<Server>, GenericRepo<Server>>();
-
-builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
 if (builder.Environment.IsDevelopment())
 {
@@ -39,9 +34,13 @@ else
     builder.Services.RegisterEventBus();
 }
 
-builder.Services.AddSignalR();
 
 var app = builder.Build();
+
+// UPDATE DB ON STARTUP
+var dbContext = app.Services.GetService<AppDbContext>();
+if (dbContext == null) throw new Exception("Db context is null");
+dbContext.Database.Migrate();
 
 // Configure the HTTP request pipeline.
 app.UseSwagger();
@@ -54,6 +53,5 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
-app.MapHub<RealTimeHub>("/geolocationHub"); /// change magic string
-
+ 
 app.Run();
